@@ -27,5 +27,8 @@ def test_find_blocks():
     from app.excel import ExcelParser
     assert hasattr(ExcelParser, "find_blocks")
     assert callable(ExcelParser, "find_blocks")
+    parser = ExcelParser()
+    workbook = dummy_workbook()
+    blocks = parser.find_blocks()
 
 # EOF
