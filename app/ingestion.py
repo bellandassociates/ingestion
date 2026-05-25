@@ -1,13 +1,11 @@
 # -*- Coding: utf-8 -*-
 """
-excel.py
+app/ingestion.py
 
-Automated Excel file parsing code
+Code for ingestion engine
 """
 
-import openpyxl as xl
-
-class ExcelParser:
+class IngestionEngine:
     def __init__(self):
         pass
 
