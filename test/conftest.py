@@ -10,22 +10,56 @@ import os
 from pathlib import Path
 import psycopg
 import pytest
+import shutil
 
 DB_CONN_ERR_INCORRECT_TARGET_DB = """You might be trying to run tests against a
 production database. Please check the target and try again."""
 
-@pytest.fixture(scope="session")
-def prep_incoming_directory():
-    """
-    Ensures that the watched directory actually exists before tests run, and
-    provides the path handle in an OS independent way.
-    """
-    path = Path("/data")
-    assert path.exists(), f"{path} does not exist in the container. Please" \
-        " ensure that the container is correctly configured."
-    return path
+INCOMING_PATH = Path("/data")
 
-@pytest.fixture(scope="session")
+# -----------------------------------------------------------------------------
+# Session-level environment checks
+# -----------------------------------------------------------------------------
+
+@pytest.fixture(scope="session", autouse=True)
+def incoming_directory_exists():
+    """
+    Ensures that the watched directory actually exists at test initialization,
+    and provides the path handle in an OS independent way.
+    """
+    assert INCOMING_PATH.exists(), (
+        f"{INCOMING_PATH} does not exist in the container. "
+        "Please ensure that the container is correctly configured."
+    )
+
+@pytest.fixture(scope="session", autouse=True)
+def check_database_type():
+    """
+    Ensures that the test is not accidentally ran against a production level
+    database by checking DB_TYPE environment variable.
+    """
+    assert os.environ["DB_TYPE"].lower() == "test", \
+            DB_CONN_ERR_INCORRECT_TARGET_DB
+
+# -----------------------------------------------------------------------------
+# Per-test cleanup operations
+# -----------------------------------------------------------------------------
+
+@pytest.fixture(scope="function", autouse=True)
+def purge_incoming_directory():
+    """
+    Ensures proper isolation between tests by erasing all side effects (files
+    and database states) after each test.
+    """
+    # Clear incoming directory before test
+    for item in INCOMING_PATH.iterdir():
+        if item.is_file():
+            item.unlink()
+        elif item.is_dir():
+            shutil.rmtree(item)
+    yield
+
+@pytest.fixture(scope="function", autouse=True)
 def purge_test_database():
     """
     Purge the ephemeral test database to make sure the database is in a blank
@@ -34,20 +68,19 @@ def purge_test_database():
     db_user = os.environ["DB_USER"]
     db_password = os.environ["DB_PASS"]
     host = os.environ["HOSTNAME"]
-    db_type = os.environ["DB_TYPE"]
-    assert db_type.lower() == "test", DB_CONN_ERR_INCORRECT_TARGET_DB
+
     admin_conn = psycopg.connect(
         f"postgresql://{db_user}:{db_password}@{host}:5432/postgres",
         autocommit=True,
     )
     with admin_conn.cursor() as cursor:
         cursor.execute("""
-            SELECT dbname
+            SELECT datname
             FROM pg_database
             WHERE datistemplate = false
-                AND dbname NOT IN ('postgres');
+                AND datname NOT IN ('postgres');
         """)
-        dbs = [row[0] for row in cur.fetchall()]
+        dbs = [row[0] for row in cursor.fetchall()]
         for db in dbs:
             cursor.execute(f"""
                 SELECT pg_terminate_backend(pid)
@@ -58,6 +91,9 @@ def purge_test_database():
             (db,)
             )
             cursor.execute(f"DROP DATABASE IF EXISTS {db}")
+
+    admin_conn.close()
+    yield
 
 @pytest.fixture
 def dummy_workbook():
@@ -77,7 +113,8 @@ def dummy_workbook():
         ["val1d", "val2d", "val3d", "val4d"],
     ]
     for ws in wb:
-        ws.append(contents)
+        for row in contents:
+            ws.append(row)
     stream = io.BytesIO()
     wb.save(stream)
     stream.seek(0)
