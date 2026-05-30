@@ -4,18 +4,22 @@ test/conftest.py
 Configs and fixtures for pytest
 """
 
+# Built-in module imports
 import io
-import openpyxl as xl
 import os
 from pathlib import Path
+import shutil
+
+# 3rd party module imports
+import openpyxl as xl
 import psycopg
 import pytest
-import shutil
 
 DB_CONN_ERR_INCORRECT_TARGET_DB = """You might be trying to run tests against a
 production database. Please check the target and try again."""
 
 INCOMING_PATH = Path("/data")
+SCHEMA_PATH = Path("/schema")
 
 # -----------------------------------------------------------------------------
 # Session-level environment checks
@@ -94,6 +98,62 @@ def purge_test_database():
 
     admin_conn.close()
     yield
+
+# -----------------------------------------------------------------------------
+# Helper stubs
+# -----------------------------------------------------------------------------
+
+@pytest.fixture
+def launch_ingestion_engine():
+    """
+    Launches ingestion engine. Currently a stub that does nothing.
+    """
+    def _launch():
+        # TODO replace with real function call
+        return None
+    return _launch
+
+@pytest.fixture
+def write_test_file_to():
+    """
+    Creates a real test file to incoming path to simulate user file upload.
+    """
+    def _write(path, sheets):
+        wb = xl.Workbook()
+        wb.remove(wb.active)
+
+        for sheet_name, rows in sheets.items():
+            ws = wb.create_sheet(sheet_name)
+            for row in rows:
+                ws.append(row)
+        wb.save(path)
+
+    return _write
+
+@pytest.fixture
+def tables_exist():
+    """
+    Stub for checking whether tables exist in the database. As stub it always
+    returns False.
+    """
+    def _exists(table_names):
+        return False
+    return _exists
+
+@pytest.fixture
+def db():
+    """
+    Stub database inspector.
+    """
+    class StubDB:
+        def columns_match(self, table, expected_columns, expected_types):
+            return False
+
+    return StubDB()
+
+# -----------------------------------------------------------------------------
+# Dummy fixtures
+# -----------------------------------------------------------------------------
 
 @pytest.fixture
 def dummy_workbook():
