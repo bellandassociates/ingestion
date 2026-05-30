@@ -131,6 +131,16 @@ def write_test_file_to():
     return _write
 
 @pytest.fixture
+def database_exist():
+    """
+    Stub for checking whether the database exists. As stub it always returns
+    False.
+    """
+    def _exists(name):
+        return False
+    return _exists
+
+@pytest.fixture
 def tables_exist():
     """
     Stub for checking whether tables exist in the database. As stub it always
