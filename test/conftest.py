@@ -5,6 +5,7 @@ Configs and fixtures for pytest
 """
 
 # Built-in module imports
+import csv
 import io
 import os
 from pathlib import Path
@@ -114,7 +115,7 @@ def launch_ingestion_engine():
     return _launch
 
 @pytest.fixture
-def write_test_file_to():
+def write_test_xlsx_file_to():
     """
     Creates a real test file to incoming path to simulate user file upload.
     """
@@ -127,6 +128,19 @@ def write_test_file_to():
             for row in rows:
                 ws.append(row)
         wb.save(path)
+
+    return _write
+
+@pytest.fixture
+def write_test_csv_file_to():
+    """
+    Creates a real test file to incoming path to simulate user file upload.
+    """
+    def _write(path, data=None):
+        data = []
+        with open(path) as f:
+            writer = csv.writer(f)
+            writer.writerows(data)
 
     return _write
 
