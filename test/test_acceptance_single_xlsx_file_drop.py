@@ -8,7 +8,7 @@ the watched directory.
 # Built-in module imports
 from datetime import date
 
-def test_single_file_dropoff_with_user_schema(
+def test_single_xlsx_file_dropoff_with_user_schema(
     launch_ingestion_engine,
     write_schema_to,
     write_test_file_to,
@@ -111,7 +111,7 @@ def test_single_file_dropoff_with_user_schema(
         expected_types=["int", "string", "decimal", "int"],
     )
 
-def test_single_file_dropoff_with_automated_schema(
+def test_single_xlsx_file_dropoff_with_automated_schema(
     launch_ingestion_engine,
     write_test_file_to,
     database_exists,
