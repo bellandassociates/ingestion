@@ -11,7 +11,7 @@ from datetime import date
 def test_single_csv_file_dropoff_with_user_schema(
     launch_ingestion_engine,
     write_schema_to,
-    write_test_file_to,
+    write_test_csv_file_to,
     database_exists,
     tables_exist,
     db,
@@ -68,7 +68,7 @@ def test_single_csv_file_dropoff_with_user_schema(
 
 def test_single_csv_file_dropoff_with_automated_schema(
     launch_ingestion_engine,
-    write_test_file_to,
+    write_test_csv_file_to,
     database_exists,
     tables_exist,
     db,

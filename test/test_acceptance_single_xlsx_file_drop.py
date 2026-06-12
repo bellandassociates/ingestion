@@ -11,7 +11,7 @@ from datetime import date
 def test_single_xlsx_file_dropoff_with_user_schema(
     launch_ingestion_engine,
     write_schema_to,
-    write_test_file_to,
+    write_test_xlsx_file_to,
     database_exists,
     tables_exist,
     db,
@@ -73,7 +73,7 @@ def test_single_xlsx_file_dropoff_with_user_schema(
         }
     )
 
-    write_test_file_to(
+    write_test_xlsx_file_to(
         workbook_file,
         sheets={
             "Ships": [
@@ -113,7 +113,7 @@ def test_single_xlsx_file_dropoff_with_user_schema(
 
 def test_single_xlsx_file_dropoff_with_automated_schema(
     launch_ingestion_engine,
-    write_test_file_to,
+    write_test_xlsx_file_to,
     database_exists,
     tables_exist,
     db,
@@ -130,7 +130,7 @@ def test_single_xlsx_file_dropoff_with_automated_schema(
     launch_ingestion_engine()
     workbook_file = INCOMING_PATH / "sample_data.xlsx"
 
-    write_test_file_to(
+    write_test_xlsx_file_to(
         workbook_file,
         sheets={
             "Ships": [

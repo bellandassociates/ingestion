@@ -19,15 +19,24 @@ import pytest
 DB_CONN_ERR_INCORRECT_TARGET_DB = """You might be trying to run tests against a
 production database. Please check the target and try again."""
 
-INCOMING_PATH = Path("/data")
-SCHEMA_PATH = Path("/schema")
+# -----------------------------------------------------------------------------
+# Constant-valued fixtures
+# -----------------------------------------------------------------------------
+
+@pytest.fixture(scope="session")
+def INCOMING_PATH():
+    return Path("/data")
+
+@pytest.fixture(scope="session")
+def SCHEMA_PATH():
+    return Path("/schema")
 
 # -----------------------------------------------------------------------------
 # Session-level environment checks
 # -----------------------------------------------------------------------------
 
 @pytest.fixture(scope="session", autouse=True)
-def incoming_directory_exists():
+def incoming_directory_exists(INCOMING_PATH):
     """
     Ensures that the watched directory actually exists at test initialization,
     and provides the path handle in an OS independent way.
@@ -51,7 +60,7 @@ def check_database_type():
 # -----------------------------------------------------------------------------
 
 @pytest.fixture(scope="function", autouse=True)
-def purge_incoming_directory():
+def purge_incoming_directory(INCOMING_PATH):
     """
     Ensures proper isolation between tests by erasing all side effects (files
     and database states) after each test.
@@ -72,7 +81,7 @@ def purge_test_database():
     """
     db_user = os.environ["DB_USER"]
     db_password = os.environ["DB_PASS"]
-    host = os.environ["HOSTNAME"]
+    host = os.environ["DB_HOST"]
 
     admin_conn = psycopg.connect(
         f"postgresql://{db_user}:{db_password}@{host}:5432/postgres",
@@ -145,7 +154,28 @@ def write_test_csv_file_to():
     return _write
 
 @pytest.fixture
-def database_exist():
+def write_schema_to():
+    """
+    Creates a real schema to simulate user-supplied schema config file in json
+    format.
+    """
+    def _write(path, data=None):
+        path = Path(path)
+        if data is None:
+            data = {}
+
+        path.parent.mkdir(parents=True, exist_ok=True)
+
+        with path.open('w', encoding="utf-8") as f:
+            json.dump(data, f, indent=2)
+
+        return path
+
+    return _write
+
+
+@pytest.fixture
+def database_exists():
     """
     Stub for checking whether the database exists. As stub it always returns
     False.
