@@ -36,7 +36,10 @@ jobs:
     # 6. Combine outputs into single report
       - name: Combine outputs into single report
         run: |
-          echo "## Pytest Results" > artifacts/combined_report.md
+          echo "---" >> artifacts/combined_report.md
+          echo "title: {{ title }}" >> artifacts/combined_report.md
+          echo "---" >> artifacts/combined_report.md
+          echo "## Pytest Results" >> artifacts/combined_report.md
           echo "```" >> artifacts/combined_report.md
           cat artifacts/pytest_output.txt >> artifacts/combined_report.md
           echo "```" >> artifacts/combined_report.md
@@ -55,4 +58,3 @@ jobs:
         with:
           title: "Automated Report for ${{ github.sha }}"
           filename: artifacts/combined_report.md
-          labels: ci
