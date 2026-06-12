@@ -44,15 +44,15 @@ jobs:
           echo "title: Automated report" >> artifacts/combined_report.md
           echo "---" >> artifacts/combined_report.md
           echo "## Pytest Results" >> artifacts/combined_report.md
-          echo "```" >> artifacts/combined_report.md
+          echo "\`\`\`" >> artifacts/combined_report.md
           cat artifacts/pytest_output.txt
           cat artifacts/pytest_output.txt >> artifacts/combined_report.md
-          echo "```" >> artifacts/combined_report.md
+          echo "\`\`\`" >> artifacts/combined_report.md
           echo "---" >> artifacts/combined_report.md
           echo "## Pylint Results" >> artifacts/combined_report.md
-          echo "```" >> artifacts/combined_report.md
+          echo "\`\`\`" >> artifacts/combined_report.md
           cat artifacts/pylint_output.txt >> artifacts/combined_report.md
-          echo "```" >> artifacts/combined_report.md
+          echo "\`\`\`" >> artifacts/combined_report.md
 
     # 7. Create github issue with results
       - name: Create github issues with results
