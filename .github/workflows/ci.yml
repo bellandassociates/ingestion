@@ -17,6 +17,9 @@ jobs:
       - name: Build project image
         run: bash build.sh
 
+    # 3. Create test network
+      - name: Create Test network
+        run: podman network create bna-test-net
     # 3. Launch test db
       - name: Launch test db
         run: bash testdb.sh
