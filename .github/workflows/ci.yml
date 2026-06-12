@@ -37,7 +37,7 @@ jobs:
       - name: Combine outputs into single report
         run: |
           echo "---" >> artifacts/combined_report.md
-          echo "title: {{ title }}" >> artifacts/combined_report.md
+          echo "title: {{ env.TITLE }}" >> artifacts/combined_report.md
           echo "---" >> artifacts/combined_report.md
           echo "## Pytest Results" >> artifacts/combined_report.md
           echo "```" >> artifacts/combined_report.md
@@ -55,6 +55,6 @@ jobs:
         uses: JasonEtco/create-an-issue@v2.4.0
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          TITLE: "Automated Report for ${{ github.sha }}"
         with:
-          title: "Automated Report for ${{ github.sha }}"
           filename: artifacts/combined_report.md
