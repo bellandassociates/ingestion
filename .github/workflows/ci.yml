@@ -1,0 +1,54 @@
+name: Test
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+
+    steps:
+    # 1. Checkout code
+      - name: Checkout repo
+        uses: actions/checkout@v4
+
+    # 2. Build project image
+      - name: Build project image
+        run: bash build.sh
+
+    # 3. Launch test db
+      - name: Launch test-db
+        run: bash test-db.sh
+
+    # 4. Run tests
+      - name: Run tests inside container
+        id: run_tests
+        run: |
+          mkdir -p artifacts
+
+          bash test.sh
+          bash lint.sh
+          
+    # 5. Create github issue with results
+      - name: Create github issues with results
+        if: always()
+        uses: peter-evans/create-issue-from-file@v4
+        with:
+          title: "Automated Report for ${{ github.sha }}"
+          content-filepath: artifacts/combined_report.md
+          labels: ci
+
+    # 6. Combine outputs into single report
+      - name: Combine outputs into single report
+        runs: |
+          echo "## Pytest Results" > artifacts/combined_report.md
+          echo "```" >> artifacts/combined_report.md
+          cat artifacts/pytest_output.txt >> artifacts/combined_report.md
+          echo "```" >> artifacts/combined_report.md
+          echo "---" >> artifacts/combined_report.md
+          echo "## Pylint Results" > artifacts/combined_report.md
+          echo "```" >> artifacts/combined_report.md
+          cat artifacts/pylint_output.txt >> artifacts/combined_report.md
+          echo "```" >> artifacts/combined_report.md
+
