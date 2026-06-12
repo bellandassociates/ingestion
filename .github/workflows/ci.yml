@@ -38,7 +38,6 @@ jobs:
           mkdir data
 
           bash test.sh
-          sed -r "s/\x1B\[[0-9;]*[mk]//g" artifacts/pytest_output.txt > artifacts/pytest_output.txt
           bash lint.sh
 
     # 6. Combine outputs into single report
