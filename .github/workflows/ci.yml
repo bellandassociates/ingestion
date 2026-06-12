@@ -45,6 +45,7 @@ jobs:
           echo "---" >> artifacts/combined_report.md
           echo "## Pytest Results" >> artifacts/combined_report.md
           echo "```" >> artifacts/combined_report.md
+          cat artifacts/pytest_output.txt
           cat artifacts/pytest_output.txt >> artifacts/combined_report.md
           echo "```" >> artifacts/combined_report.md
           echo "---" >> artifacts/combined_report.md
