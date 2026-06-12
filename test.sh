@@ -7,5 +7,5 @@ podman run --rm -it \
 	-v ./data:/data:Z \
 	--network bna-test-net \
 	--env-file test.env \
-	bna bash -c "pytest" \
+	bna bash -c "pytest -q --color=no" \
 	| tee artifacts/pytest_output.txt
