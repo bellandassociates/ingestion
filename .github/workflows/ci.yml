@@ -20,11 +20,11 @@ jobs:
     # 3. Create test network
       - name: Create Test network
         run: podman network create bna-test-net
-    # 3. Launch test db
+    # 4. Launch test db
       - name: Launch test db
         run: bash testdb.sh
 
-    # 4. Run tests
+    # 5. Run tests
       - name: Run tests inside container
         id: run_tests
         run: |
@@ -32,15 +32,6 @@ jobs:
 
           bash test.sh
           bash lint.sh
-          
-    # 5. Create github issue with results
-      - name: Create github issues with results
-        if: always()
-        uses: peter-evans/create-issue-from-file@v4
-        with:
-          title: "Automated Report for ${{ github.sha }}"
-          content-filepath: artifacts/combined_report.md
-          labels: ci
 
     # 6. Combine outputs into single report
       - name: Combine outputs into single report
@@ -55,3 +46,11 @@ jobs:
           cat artifacts/pylint_output.txt >> artifacts/combined_report.md
           echo "```" >> artifacts/combined_report.md
 
+    # 7. Create github issue with results
+      - name: Create github issues with results
+        if: always()
+        uses: peter-evans/create-issue-from-file@v4
+        with:
+          title: "Automated Report for ${{ github.sha }}"
+          content-filepath: artifacts/combined_report.md
+          labels: ci
