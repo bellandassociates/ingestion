@@ -18,8 +18,8 @@ jobs:
         run: bash build.sh
 
     # 3. Launch test db
-      - name: Launch test-db
-        run: bash test-db.sh
+      - name: Launch test db
+        run: bash testdb.sh
 
     # 4. Run tests
       - name: Run tests inside container
