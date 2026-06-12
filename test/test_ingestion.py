@@ -4,8 +4,8 @@ Unit test for /app/ingestion.py
 """
 
 def test_ingestion_instantiation():
-    from app.ingestion import IngestionEngine
-    from app.excel import ExcelParser
+    from ingestion import IngestionEngine
+    from excel import ExcelParser
     ig = IngestionEngine(ExcelParser())
     assert isinstance(ig.parser, ExcelParser)
 
