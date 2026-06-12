@@ -7,6 +7,7 @@ the watched directory.
 
 # Built-in module imports
 from datetime import date
+from test.assets.test_files import csv_test_data, csv_test_schema
 
 def test_single_csv_file_dropoff_with_user_schema(
     launch_ingestion_engine,
@@ -33,30 +34,12 @@ def test_single_csv_file_dropoff_with_user_schema(
 
     write_schema_to(
         schema_file,
-        schema={
-            "database": "sample_data",
-            "tables": {
-                "ships": {
-                    "orientation": "h",
-                    "columns": {
-                        "name": "string",
-                        "completed": "date",
-                        "length_m": "float",
-                        "sunk": "boolean",
-                    },
-                },
-            },
-        }
+        schema=csv_test_schema,
     )
 
     write_test_csv_file_to(
         csv_file,
-        data=[
-            ["name", "completed", "length_m", "sunk"],
-            ["Titanic", date(1912,4,2), 269.1, True],
-            ["Endurance", date(1912,12,17), 44, True],
-            ["Emma Maersk", date(2006,5,18), 398, False],
-        ],
+        data=csv_test_data,
     )
     assert database_exists("sample_data")
     assert tables_exist(["ships"])
@@ -87,12 +70,7 @@ def test_single_csv_file_dropoff_with_automated_schema(
 
     write_test_csv_file_to(
         csv_file,
-        data=[
-            ["name", "completed", "length_m", "sunk"],
-            ["Titanic", date(1912,4,2), 269.1, True],
-            ["Endurance", date(1912,12,17), 44, True],
-            ["Emma Maersk", date(2006,5,18), 398, False],
-        ],
+        data=csv_test_data,
     )
     assert database_exists("sample_data")
     assert tables_exist(["ships", "lego_header", "lego"])
