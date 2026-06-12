@@ -41,7 +41,7 @@ jobs:
           cat artifacts/pytest_output.txt >> artifacts/combined_report.md
           echo "```" >> artifacts/combined_report.md
           echo "---" >> artifacts/combined_report.md
-          echo "## Pylint Results" > artifacts/combined_report.md
+          echo "## Pylint Results" >> artifacts/combined_report.md
           echo "```" >> artifacts/combined_report.md
           cat artifacts/pylint_output.txt >> artifacts/combined_report.md
           echo "```" >> artifacts/combined_report.md
@@ -49,8 +49,10 @@ jobs:
     # 7. Create github issue with results
       - name: Create github issues with results
         if: always()
-        uses: peter-evans/create-issue-from-file@v4
+        uses: JasonEtco/create-an-issue@v2.4.0
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           title: "Automated Report for ${{ github.sha }}"
-          content-filepath: artifacts/combined_report.md
+          filename: artifacts/combined_report.md
           labels: ci
