@@ -41,7 +41,7 @@ jobs:
 
     # 6. Combine outputs into single report
       - name: Combine outputs into single report
-        runs: |
+        run: |
           echo "## Pytest Results" > artifacts/combined_report.md
           echo "```" >> artifacts/combined_report.md
           cat artifacts/pytest_output.txt >> artifacts/combined_report.md
