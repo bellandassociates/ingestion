@@ -7,6 +7,7 @@ Configs and fixtures for pytest
 # Built-in module imports
 import csv
 import io
+import json
 import os
 from pathlib import Path
 import shutil
@@ -147,7 +148,7 @@ def write_test_csv_file_to():
     """
     def _write(path, data=None):
         data = []
-        with open(path) as f:
+        with open(path, 'w+') as f:
             writer = csv.writer(f)
             writer.writerows(data)
 
@@ -159,15 +160,15 @@ def write_schema_to():
     Creates a real schema to simulate user-supplied schema config file in json
     format.
     """
-    def _write(path, data=None):
+    def _write(path, schema=None):
         path = Path(path)
-        if data is None:
-            data = {}
+        if schema is None:
+            schema = {}
 
         path.parent.mkdir(parents=True, exist_ok=True)
 
-        with path.open('w', encoding="utf-8") as f:
-            json.dump(data, f, indent=2)
+        with open(path, 'w+', encoding="utf-8") as f:
+            json.dump(schema, f, indent=2)
 
         return path
 
