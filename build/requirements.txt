@@ -6,3 +6,4 @@ psycopg
 pylint
 pytest
 seaborn
+watchdog
